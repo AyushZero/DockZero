@@ -98,11 +98,11 @@
             </Border.Background>
             <Border.Effect>
                 <DropShadowEffect 
-                    BlurRadius="15" 
+                    BlurRadius="10" 
                     Direction="270" 
-                    ShadowDepth="5" 
+                    ShadowDepth="3" 
                     Color="Black" 
-                    Opacity="0.3"/>
+                    Opacity="0.2"/>
             </Border.Effect>
             <Grid>
                 <Grid.ColumnDefinitions>
