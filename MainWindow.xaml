@@ -32,7 +32,11 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <ContentPresenter/>
+                        <Border Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter/>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -110,6 +114,49 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
+
+                <!-- Left Section - Timer -->
+                <StackPanel Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Left"
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center">
+                    <Button x:Name="ResetTimerButton"
+                            Style="{StaticResource MediaButtonStyle}"
+                            Click="ResetTimerButton_Click"
+                            Margin="0,0,1,0"
+                            Padding="1">
+                        <Path Data="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z" 
+                              Style="{StaticResource MediaIconStyle}"
+                              Width="10"
+                              Height="10"/>
+                    </Button>
+                    <Border Background="#0DFFFFFF" 
+                            CornerRadius="4" 
+                            Padding="8,2" 
+                            Height="15"
+                            MouseLeftButtonDown="TimerBorder_MouseLeftButtonDown">
+                        <StackPanel Orientation="Horizontal" 
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center">
+                            <TextBlock x:Name="TimerText"
+                                     Text="52:00"
+                                     Style="{StaticResource TextStyle}"
+                                     Foreground="White"
+                                     HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                    <Button x:Name="SwitchTimerButton"
+                            Style="{StaticResource MediaButtonStyle}"
+                            Click="SwitchTimerButton_Click"
+                            Margin="1,0,0,0"
+                            Padding="1">
+                        <Path Data="M8 5v14l11-7z" 
+                              Style="{StaticResource MediaIconStyle}"
+                              Width="10"
+                              Height="10"/>
+                    </Button>
+                </StackPanel>
 
                 <!-- Center Section -->
                 <StackPanel Grid.Column="1" Margin="0,0,0,0" MinWidth="10" HorizontalAlignment="Center">

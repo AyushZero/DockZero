@@ -22,6 +22,10 @@ public partial class MainWindow : Window
     public required DispatcherTimer timer;
     private bool isPlaying = false;
     private Path? playPauseIcon;
+    private DispatcherTimer pomodoroTimer;
+    private TimeSpan remainingTime = TimeSpan.FromMinutes(52);
+    private bool isTimerRunning = false;
+    private bool isLongTimer = true; // true for 52 minutes, false for 17 minutes
 
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
@@ -113,6 +117,11 @@ public partial class MainWindow : Window
         {
             playPauseIcon = icon;
         }
+
+        // Initialize pomodoro timer
+        pomodoroTimer = new DispatcherTimer();
+        pomodoroTimer.Interval = TimeSpan.FromSeconds(1);
+        pomodoroTimer.Tick += PomodoroTimer_Tick;
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -260,5 +269,63 @@ public partial class MainWindow : Window
         {
             playPauseIcon.Data = Geometry.Parse(PLAY_PATH);
         }
+    }
+
+    private void TimerBorder_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        if (isTimerRunning)
+        {
+            pomodoroTimer.Stop();
+        }
+        else
+        {
+            pomodoroTimer.Start();
+        }
+        isTimerRunning = !isTimerRunning;
+    }
+
+    private void SwitchTimerButton_Click(object sender, RoutedEventArgs e)
+    {
+        isLongTimer = !isLongTimer;
+        remainingTime = TimeSpan.FromMinutes(isLongTimer ? 52 : 17);
+        if (TimerText != null)
+        {
+            TimerText.Text = remainingTime.ToString(@"mm\:ss");
+        }
+        pomodoroTimer.Stop();
+        isTimerRunning = false;
+    }
+
+    private void PomodoroTimer_Tick(object? sender, EventArgs e)
+    {
+        if (remainingTime > TimeSpan.Zero)
+        {
+            remainingTime = remainingTime.Subtract(TimeSpan.FromSeconds(1));
+            if (TimerText != null)
+            {
+                TimerText.Text = remainingTime.ToString(@"mm\:ss");
+            }
+        }
+        else
+        {
+            pomodoroTimer.Stop();
+            isTimerRunning = false;
+            remainingTime = TimeSpan.FromMinutes(isLongTimer ? 52 : 17);
+            if (TimerText != null)
+            {
+                TimerText.Text = remainingTime.ToString(@"mm\:ss");
+            }
+        }
+    }
+
+    private void ResetTimerButton_Click(object sender, RoutedEventArgs e)
+    {
+        remainingTime = TimeSpan.FromMinutes(isLongTimer ? 52 : 17);
+        if (TimerText != null)
+        {
+            TimerText.Text = remainingTime.ToString(@"mm\:ss");
+        }
+        pomodoroTimer.Stop();
+        isTimerRunning = false;
     }
 }
