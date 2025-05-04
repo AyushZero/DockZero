@@ -297,9 +297,10 @@
                 Width="450"
                 Height="265"
                 VerticalAlignment="Top"
-                Margin="0,18,0,0"
+                Margin="0,0,0,0"
                 Background="#D9000000"
-                Panel.ZIndex="0">
+                Panel.ZIndex="0"
+                Visibility="Collapsed">
             <Border.Effect>
                 <DropShadowEffect 
                     BlurRadius="10" 
@@ -316,7 +317,7 @@
                 Height="45"
                 CornerRadius="15,15,15,15"
                 VerticalAlignment="Top"
-                Margin="0,30,0,0"
+                Margin="0,18,0,0"
                 Visibility="Collapsed"
                 Panel.ZIndex="1">
             <Border.Background>

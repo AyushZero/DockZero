@@ -409,44 +409,34 @@ public partial class MainWindow : Window
         System.Diagnostics.Debug.WriteLine("NotesButton_Click started");
         try
         {
-            // First, ensure all required components exist
-            if (NotesViewPanel == null)
+            if (NotesViewPanel == null || NotesViewText == null)
             {
-                System.Diagnostics.Debug.WriteLine("ERROR: NotesViewPanel is null");
+                System.Diagnostics.Debug.WriteLine("ERROR: Required components are null");
                 return;
             }
 
-            if (NotesViewText == null)
-            {
-                System.Diagnostics.Debug.WriteLine("ERROR: NotesViewText is null");
-                return;
-            }
-
-            // Ensure notes list exists
             if (notes == null)
             {
-                System.Diagnostics.Debug.WriteLine("Notes list was null, creating new list");
                 notes = new List<string>();
             }
 
-            // Toggle visibility
             if (NotesViewPanel.Visibility == Visibility.Visible)
             {
                 System.Diagnostics.Debug.WriteLine("Hiding notes panel");
                 NotesViewPanel.Visibility = Visibility.Collapsed;
+                NotesAreaBackground.Visibility = Visibility.Collapsed;
                 Height = 18;
                 return;
             }
 
-            // Show notes panel
             System.Diagnostics.Debug.WriteLine("Showing notes panel");
             try
             {
-                // First set visibility and height
+                NotesAreaBackground.Margin = new Thickness(0, 18, 0, 0);
+                NotesAreaBackground.Visibility = Visibility.Visible;
                 NotesViewPanel.Visibility = Visibility.Visible;
                 Height = 238;
 
-                // Then update content
                 if (notes.Count > 0)
                 {
                     System.Diagnostics.Debug.WriteLine($"Formatting {notes.Count} notes for display");
@@ -471,18 +461,18 @@ public partial class MainWindow : Window
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error displaying notes: {ex}");
-                // Don't throw, just hide the panel
                 NotesViewPanel.Visibility = Visibility.Collapsed;
+                NotesAreaBackground.Visibility = Visibility.Collapsed;
                 Height = 18;
             }
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"CRITICAL ERROR in NotesButton_Click: {ex}");
-            // Don't show message box, just ensure panel is hidden
             if (NotesViewPanel != null)
             {
                 NotesViewPanel.Visibility = Visibility.Collapsed;
+                NotesAreaBackground.Visibility = Visibility.Collapsed;
             }
             Height = 18;
         }
@@ -491,6 +481,7 @@ public partial class MainWindow : Window
     private void CloseNotesViewButton_Click(object sender, RoutedEventArgs e)
     {
         NotesViewPanel.Visibility = Visibility.Collapsed;
+        NotesAreaBackground.Visibility = Visibility.Collapsed;
         Height = 18;
     }
 
@@ -608,33 +599,33 @@ public partial class MainWindow : Window
             notes.Clear();
             SaveNotes();
 
-            if (NotesViewPanel != null)
-            {
-                NotesViewPanel.Visibility = Visibility.Collapsed;
-            }
+            // Hide both panels and background
+            NotesViewPanel.Visibility = Visibility.Collapsed;
+            NotesPanel.Visibility = Visibility.Collapsed;
+            NotesAreaBackground.Visibility = Visibility.Collapsed;
             Height = 18;
         }
         catch (Exception ex)
         {
             System.Diagnostics.Debug.WriteLine($"Error in ClearNotesButton_Click: {ex}");
-            // Ensure panel is hidden
-            if (NotesViewPanel != null)
-            {
-                NotesViewPanel.Visibility = Visibility.Collapsed;
-            }
+            // Ensure all panels are hidden
+            NotesViewPanel.Visibility = Visibility.Collapsed;
+            NotesPanel.Visibility = Visibility.Collapsed;
+            NotesAreaBackground.Visibility = Visibility.Collapsed;
             Height = 18;
         }
     }
 
     private void AddNoteButton_Click(object sender, RoutedEventArgs e)
     {
+        NotesAreaBackground.Margin = new Thickness(0, 18, 0, 0);
+        NotesAreaBackground.Visibility = Visibility.Visible;
         NotesPanel.Visibility = Visibility.Visible;
         NotesViewPanel.Visibility = Visibility.Collapsed;
         NotesTextBox.Clear();
         NotesTextBox.Focus();
         
-        // Adjust window height
-        Height = 63; // 18 (main panel) + 45 (notes panel)
+        Height = 63;
     }
 
     private void NotesTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
@@ -648,22 +639,21 @@ public partial class MainWindow : Window
                 SaveNotes();
             }
             NotesPanel.Visibility = Visibility.Collapsed;
+            NotesAreaBackground.Visibility = Visibility.Collapsed;
             NotesTextBox.Clear();
             
-            // Reset window height
             Height = 18;
         }
         else if (e.Key == System.Windows.Input.Key.Escape)
         {
             NotesPanel.Visibility = Visibility.Collapsed;
+            NotesAreaBackground.Visibility = Visibility.Collapsed;
             NotesTextBox.Clear();
             
-            // Reset window height
             Height = 18;
         }
     }
 
-    // Add this to handle clicking outside the notes view to close it
     protected override void OnMouseDown(System.Windows.Input.MouseButtonEventArgs e)
     {
         base.OnMouseDown(e);
@@ -674,7 +664,7 @@ public partial class MainWindow : Window
                 mousePosition.Y < 0 || mousePosition.Y > NotesViewPanel.ActualHeight)
             {
                 NotesViewPanel.Visibility = Visibility.Collapsed;
-                // Reset window height
+                NotesAreaBackground.Visibility = Visibility.Collapsed;
                 Height = 18;
             }
         }
