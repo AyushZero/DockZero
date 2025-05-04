@@ -10,6 +10,7 @@
     AllowsTransparency="True"
     Background="Transparent"
     Topmost="True"
+    ShowInTaskbar="False"
     ResizeMode="NoResize"
     WindowStartupLocation="Manual"
     MouseEnter="Window_MouseEnter"
@@ -48,6 +49,22 @@
             <Setter Property="Fill" Value="White"/>
             <Setter Property="Stretch" Value="Uniform"/>
             <Setter Property="Margin" Value="4,0"/>
+        </Style>
+
+        <Style x:Key="SmallIconStyle" TargetType="Path">
+            <Setter Property="Width" Value="10"/>
+            <Setter Property="Height" Value="10"/>
+            <Setter Property="Fill" Value="White"/>
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Margin" Value="4,0"/>
+        </Style>
+
+        <!-- Simple ScrollBar Style -->
+        <Style x:Key="SimpleScrollBarStyle" TargetType="ScrollBar">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Opacity" Value="0.5"/>
         </Style>
         
         <Storyboard x:Key="ExpandAnimation">
@@ -156,11 +173,41 @@
                               Width="10"
                               Height="10"/>
                     </Button>
+
+                    <!-- App Shortcuts -->
+                    <Border Background="#0DFFFFFF" 
+                            CornerRadius="4" 
+                            Padding="8,2" 
+                            Height="15"
+                            Margin="8,0,0,0">
+                        <StackPanel Orientation="Horizontal" 
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center">
+                            <Button x:Name="OperaGXButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="OperaGXButton_Click">
+                                <Path Data="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" 
+                                      Style="{StaticResource SmallIconStyle}"/>
+                            </Button>
+                            <Button x:Name="WhatsAppButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="WhatsAppButton_Click">
+                                <Path Data="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44-.09.15-.14.25-.28.41-.14.17-.3.37-.43.5-.12.13-.25.28-.11.55.14.27.64 1.19 1.38 1.92.94.94 1.74 1.23 2.01 1.36.27.13.43.11.59-.08.16-.19.68-.79.86-1.06.18-.27.37-.23.62-.13zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" 
+                                      Style="{StaticResource SmallIconStyle}"/>
+                            </Button>
+                            <Button x:Name="ExplorerButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="ExplorerButton_Click">
+                                <Path Data="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" 
+                                      Style="{StaticResource SmallIconStyle}"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
 
                 <!-- Center Section -->
                 <StackPanel Grid.Column="1" Margin="0,0,0,0" MinWidth="10" HorizontalAlignment="Center">
-                    <Border Background="#0DFFFFFF" CornerRadius="4" Padding="8,2" Height="15">
+                    <Border Background="#0DFFFFFF" CornerRadius="4" Padding="8,2" Height="16">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock x:Name="TimeText"
                                      Text="00:00"
@@ -177,12 +224,42 @@
                     </Border>
                 </StackPanel>
 
-                <!-- Right Section - Media Controls -->
+                <!-- Right Section - Media Controls and Notes -->
                 <StackPanel Grid.Column="2" 
                             Orientation="Horizontal" 
                             HorizontalAlignment="Right"
                             Margin="0,0,10,0"
                             VerticalAlignment="Center">
+                    <!-- Notes Controls -->
+                    <Border Background="#0DFFFFFF" 
+                            CornerRadius="4" 
+                            Padding="8,2" 
+                            Height="15"
+                            Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" 
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center">
+                            <Button x:Name="ClearNotesButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="ClearNotesButton_Click">
+                                <Path Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" 
+                                      Style="{StaticResource SmallIconStyle}"/>
+                            </Button>
+                            <Button x:Name="NotesButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="NotesButton_Click">
+                                <Path Data="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14zM7 10h2v2H7v-2zm0 4h2v2H7v-2zm4-4h6v2h-6v-2zm0 4h6v2h-6v-2z" 
+                                      Style="{StaticResource SmallIconStyle}"/>
+                            </Button>
+                            <Button x:Name="AddNoteButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="AddNoteButton_Click">
+                                <Path Data="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" 
+                                      Style="{StaticResource SmallIconStyle}"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
                     <!-- Media Controls -->
                     <Border Background="#0DFFFFFF" 
                             CornerRadius="4" 
@@ -212,6 +289,117 @@
                         </StackPanel>
                     </Border>
                 </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Notes Area Background -->
+        <Border x:Name="NotesAreaBackground"
+                Width="450"
+                Height="265"
+                VerticalAlignment="Top"
+                Margin="0,18,0,0"
+                Background="#D9000000"
+                Panel.ZIndex="0">
+            <Border.Effect>
+                <DropShadowEffect 
+                    BlurRadius="10" 
+                    Direction="270" 
+                    ShadowDepth="3" 
+                    Color="Black" 
+                    Opacity="0.2"/>
+            </Border.Effect>
+        </Border>
+
+        <!-- Notes Panel for adding new notes -->
+        <Border x:Name="NotesPanel"
+                Width="450"
+                Height="45"
+                CornerRadius="15,15,15,15"
+                VerticalAlignment="Top"
+                Margin="0,30,0,0"
+                Visibility="Collapsed"
+                Panel.ZIndex="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#D9000000" Offset="0"/>
+                    <GradientStop Color="#D9000000" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect 
+                    BlurRadius="10" 
+                    Direction="270" 
+                    ShadowDepth="3" 
+                    Color="Black" 
+                    Opacity="0.2"/>
+            </Border.Effect>
+            <TextBox x:Name="NotesTextBox"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     Foreground="White"
+                     FontFamily="Montserrat"
+                     FontSize="12"
+                     Padding="10,8"
+                     AcceptsReturn="False"
+                     CaretBrush="White"
+                     SelectionBrush="#4DFFFFFF"
+                     KeyDown="NotesTextBox_KeyDown"/>
+        </Border>
+
+        <!-- Notes View Panel -->
+        <Border x:Name="NotesViewPanel"
+                Width="450"
+                Height="220"
+                CornerRadius="15,15,15,15"
+                VerticalAlignment="Top"
+                Margin="0,30,0,0"
+                Visibility="Collapsed"
+                Panel.ZIndex="1">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#D9000000" Offset="0"/>
+                    <GradientStop Color="#D9000000" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect 
+                    BlurRadius="10" 
+                    Direction="270" 
+                    ShadowDepth="3" 
+                    Color="Black" 
+                    Opacity="0.2"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Close button -->
+                <Button x:Name="CloseNotesViewButton"
+                        Grid.Row="0"
+                        Style="{StaticResource MediaButtonStyle}"
+                        Click="CloseNotesViewButton_Click"
+                        HorizontalAlignment="Right"
+                        Margin="0,8,8,0">
+                    <Path Data="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" 
+                          Style="{StaticResource MediaIconStyle}"/>
+                </Button>
+                
+                <ScrollViewer Grid.Row="1" 
+                             VerticalScrollBarVisibility="Auto" 
+                             Margin="0,8,0,8">
+                    <ScrollViewer.Resources>
+                        <Style TargetType="ScrollBar" BasedOn="{StaticResource SimpleScrollBarStyle}"/>
+                    </ScrollViewer.Resources>
+                    <TextBlock x:Name="NotesViewText"
+                              Foreground="White"
+                              FontFamily="Montserrat"
+                              FontSize="12"
+                              Padding="10,5"
+                              TextWrapping="Wrap"
+                              Margin="0,5,0,0"/>
+                </ScrollViewer>
             </Grid>
         </Border>
     </Grid>

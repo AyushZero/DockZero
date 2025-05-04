@@ -7,8 +7,12 @@ using System.Windows.Controls;
 using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Text;
-using System.Runtime.InteropServices.ComTypes;
 using System.Diagnostics;
+using System.Windows.Forms;
+using System.Drawing;
+using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace DockZero;
 
@@ -21,11 +25,15 @@ public partial class MainWindow : Window
     private Storyboard collapseAnimation;
     public required DispatcherTimer timer;
     private bool isPlaying = false;
-    private Path? playPauseIcon;
+    private System.Windows.Shapes.Path? playPauseIcon;
     private DispatcherTimer pomodoroTimer;
     private TimeSpan remainingTime = TimeSpan.FromMinutes(52);
     private bool isTimerRunning = false;
     private bool isLongTimer = true; // true for 52 minutes, false for 17 minutes
+    private NotifyIcon? trayIcon;
+    private bool isMinimizedToTray = false;
+    private List<string> notes = new List<string>();
+    private const string NOTES_FILE = "notes.txt";
 
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
@@ -113,7 +121,7 @@ public partial class MainWindow : Window
         collapseAnimation = (Storyboard)FindResource("CollapseAnimation");
         
         // Get reference to the play/pause icon
-        if (PlayPauseButton.Content is Path icon)
+        if (PlayPauseButton.Content is System.Windows.Shapes.Path icon)
         {
             playPauseIcon = icon;
         }
@@ -122,6 +130,73 @@ public partial class MainWindow : Window
         pomodoroTimer = new DispatcherTimer();
         pomodoroTimer.Interval = TimeSpan.FromSeconds(1);
         pomodoroTimer.Tick += PomodoroTimer_Tick;
+
+        // Initialize system tray icon
+        InitializeTrayIcon();
+
+        // Load saved notes
+        LoadNotes();
+    }
+
+    private void InitializeTrayIcon()
+    {
+        trayIcon = new NotifyIcon();
+        trayIcon.Icon = new Icon("icons/icon256.ico");
+        trayIcon.Text = "DockZero";
+        trayIcon.Visible = true;
+
+        // Create context menu
+        var contextMenu = new System.Windows.Forms.ContextMenuStrip();
+        var showItem = new System.Windows.Forms.ToolStripMenuItem("Show");
+        var exitItem = new System.Windows.Forms.ToolStripMenuItem("Exit");
+
+        showItem.Click += (s, e) => ShowWindow();
+        exitItem.Click += (s, e) => ExitApplication();
+
+        contextMenu.Items.Add(showItem);
+        contextMenu.Items.Add(exitItem);
+
+        trayIcon.ContextMenuStrip = contextMenu;
+        trayIcon.DoubleClick += (s, e) => ShowWindow();
+    }
+
+    private void ShowWindow()
+    {
+        Show();
+        WindowState = WindowState.Normal;
+        Activate();
+        isMinimizedToTray = false;
+    }
+
+    private void ExitApplication()
+    {
+        trayIcon?.Dispose();
+        System.Windows.Application.Current.Shutdown();
+    }
+
+    protected override void OnStateChanged(EventArgs e)
+    {
+        if (WindowState == WindowState.Minimized)
+        {
+            Hide();
+            isMinimizedToTray = true;
+        }
+        base.OnStateChanged(e);
+    }
+
+    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    {
+        if (!isMinimizedToTray)
+        {
+            e.Cancel = true;
+            Hide();
+            isMinimizedToTray = true;
+        }
+        else
+        {
+            trayIcon?.Dispose();
+        }
+        base.OnClosing(e);
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -142,7 +217,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error during initialization: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Diagnostics.Debug.WriteLine($"Error during initialization: {ex}");
         }
     }
 
@@ -157,7 +232,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error initializing timer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Diagnostics.Debug.WriteLine($"Error initializing timer: {ex}");
         }
     }
 
@@ -175,7 +250,7 @@ public partial class MainWindow : Window
         catch (Exception ex)
         {
             timer.Stop();
-            MessageBox.Show($"Error updating time: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Diagnostics.Debug.WriteLine($"Error updating time: {ex}");
         }
     }
 
@@ -208,7 +283,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error during expand animation: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Diagnostics.Debug.WriteLine($"Error during expand animation: {ex}");
         }
     }
 
@@ -220,7 +295,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error during collapse animation: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            System.Diagnostics.Debug.WriteLine($"Error during collapse animation: {ex}");
         }
     }
 
@@ -228,7 +303,7 @@ public partial class MainWindow : Window
     {
         if (e.Key == System.Windows.Input.Key.Escape)
         {
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
     }
 
@@ -328,4 +403,338 @@ public partial class MainWindow : Window
         pomodoroTimer.Stop();
         isTimerRunning = false;
     }
+
+    private void NotesButton_Click(object sender, RoutedEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine("NotesButton_Click started");
+        try
+        {
+            // First, ensure all required components exist
+            if (NotesViewPanel == null)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR: NotesViewPanel is null");
+                return;
+            }
+
+            if (NotesViewText == null)
+            {
+                System.Diagnostics.Debug.WriteLine("ERROR: NotesViewText is null");
+                return;
+            }
+
+            // Ensure notes list exists
+            if (notes == null)
+            {
+                System.Diagnostics.Debug.WriteLine("Notes list was null, creating new list");
+                notes = new List<string>();
+            }
+
+            // Toggle visibility
+            if (NotesViewPanel.Visibility == Visibility.Visible)
+            {
+                System.Diagnostics.Debug.WriteLine("Hiding notes panel");
+                NotesViewPanel.Visibility = Visibility.Collapsed;
+                Height = 18;
+                return;
+            }
+
+            // Show notes panel
+            System.Diagnostics.Debug.WriteLine("Showing notes panel");
+            try
+            {
+                // First set visibility and height
+                NotesViewPanel.Visibility = Visibility.Visible;
+                Height = 238;
+
+                // Then update content
+                if (notes.Count > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Formatting {notes.Count} notes for display");
+                    var formattedNotes = new List<string>();
+                    for (int i = 0; i < notes.Count; i++)
+                    {
+                        if (notes[i] != null)
+                        {
+                            formattedNotes.Add($"{i + 1}. {notes[i]}");
+                        }
+                    }
+                    NotesViewText.Text = string.Join(Environment.NewLine + Environment.NewLine, formattedNotes);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No notes to display");
+                    NotesViewText.Text = string.Empty;
+                }
+
+                NotesViewText.Visibility = Visibility.Visible;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error displaying notes: {ex}");
+                // Don't throw, just hide the panel
+                NotesViewPanel.Visibility = Visibility.Collapsed;
+                Height = 18;
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"CRITICAL ERROR in NotesButton_Click: {ex}");
+            // Don't show message box, just ensure panel is hidden
+            if (NotesViewPanel != null)
+            {
+                NotesViewPanel.Visibility = Visibility.Collapsed;
+            }
+            Height = 18;
+        }
+    }
+
+    private void CloseNotesViewButton_Click(object sender, RoutedEventArgs e)
+    {
+        NotesViewPanel.Visibility = Visibility.Collapsed;
+        Height = 18;
+    }
+
+    private void LoadNotes()
+    {
+        System.Diagnostics.Debug.WriteLine("LoadNotes started");
+        try
+        {
+            // Initialize notes list if needed
+            if (notes == null)
+            {
+                notes = new List<string>();
+            }
+
+            // Try to load notes from file
+            if (File.Exists(NOTES_FILE))
+            {
+                try
+                {
+                    var loadedNotes = File.ReadAllLines(NOTES_FILE)
+                        .Where(line => !string.IsNullOrWhiteSpace(line))
+                        .ToList();
+                    
+                    notes.Clear();
+                    notes.AddRange(loadedNotes);
+                    System.Diagnostics.Debug.WriteLine($"Successfully loaded {notes.Count} notes from file");
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error reading notes file: {ex}");
+                    // Keep existing notes if any
+                }
+            }
+
+            // Update view if visible
+            if (NotesViewPanel != null && NotesViewPanel.Visibility == Visibility.Visible && NotesViewText != null)
+            {
+                try
+                {
+                    var formattedNotes = notes.Select((note, index) => $"{index + 1}. {note}").ToList();
+                    NotesViewText.Text = string.Join(Environment.NewLine + Environment.NewLine, formattedNotes);
+                    NotesViewText.Visibility = Visibility.Visible;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error updating notes view: {ex}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error in LoadNotes: {ex}");
+            // Ensure notes list exists
+            if (notes == null)
+            {
+                notes = new List<string>();
+            }
+        }
+    }
+
+    private void SaveNotes()
+    {
+        System.Diagnostics.Debug.WriteLine("SaveNotes started");
+        try
+        {
+            if (notes == null)
+            {
+                notes = new List<string>();
+            }
+
+            // Filter out any null or empty notes
+            var validNotes = notes.Where(note => !string.IsNullOrWhiteSpace(note)).ToList();
+            
+            try
+            {
+                File.WriteAllLines(NOTES_FILE, validNotes);
+                System.Diagnostics.Debug.WriteLine($"Saved {validNotes.Count} notes to file");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error writing to notes file: {ex}");
+            }
+
+            // Update view if visible
+            if (NotesViewPanel != null && NotesViewPanel.Visibility == Visibility.Visible && NotesViewText != null)
+            {
+                try
+                {
+                    var formattedNotes = validNotes.Select((note, index) => $"{index + 1}. {note}").ToList();
+                    NotesViewText.Text = string.Join(Environment.NewLine + Environment.NewLine, formattedNotes);
+                    NotesViewText.Visibility = Visibility.Visible;
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error updating notes view: {ex}");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error in SaveNotes: {ex}");
+        }
+    }
+
+    private void ClearNotesButton_Click(object sender, RoutedEventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine("ClearNotesButton_Click started");
+        try
+        {
+            if (notes == null)
+            {
+                notes = new List<string>();
+            }
+
+            notes.Clear();
+            SaveNotes();
+
+            if (NotesViewPanel != null)
+            {
+                NotesViewPanel.Visibility = Visibility.Collapsed;
+            }
+            Height = 18;
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error in ClearNotesButton_Click: {ex}");
+            // Ensure panel is hidden
+            if (NotesViewPanel != null)
+            {
+                NotesViewPanel.Visibility = Visibility.Collapsed;
+            }
+            Height = 18;
+        }
+    }
+
+    private void AddNoteButton_Click(object sender, RoutedEventArgs e)
+    {
+        NotesPanel.Visibility = Visibility.Visible;
+        NotesViewPanel.Visibility = Visibility.Collapsed;
+        NotesTextBox.Clear();
+        NotesTextBox.Focus();
+        
+        // Adjust window height
+        Height = 63; // 18 (main panel) + 45 (notes panel)
+    }
+
+    private void NotesTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+    {
+        if (e.Key == System.Windows.Input.Key.Enter)
+        {
+            string note = NotesTextBox.Text.Trim();
+            if (!string.IsNullOrEmpty(note))
+            {
+                notes.Add(note);
+                SaveNotes();
+            }
+            NotesPanel.Visibility = Visibility.Collapsed;
+            NotesTextBox.Clear();
+            
+            // Reset window height
+            Height = 18;
+        }
+        else if (e.Key == System.Windows.Input.Key.Escape)
+        {
+            NotesPanel.Visibility = Visibility.Collapsed;
+            NotesTextBox.Clear();
+            
+            // Reset window height
+            Height = 18;
+        }
+    }
+
+    // Add this to handle clicking outside the notes view to close it
+    protected override void OnMouseDown(System.Windows.Input.MouseButtonEventArgs e)
+    {
+        base.OnMouseDown(e);
+        if (NotesViewPanel.Visibility == Visibility.Visible)
+        {
+            var mousePosition = e.GetPosition(NotesViewPanel);
+            if (mousePosition.X < 0 || mousePosition.X > NotesViewPanel.ActualWidth ||
+                mousePosition.Y < 0 || mousePosition.Y > NotesViewPanel.ActualHeight)
+            {
+                NotesViewPanel.Visibility = Visibility.Collapsed;
+                // Reset window height
+                Height = 18;
+            }
+        }
+    }
+
+    private void ExplorerButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start("explorer.exe");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error launching Explorer: {ex}");
+        }
+    }
+
+    private void OperaGXButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            string operaPath = @"C:\Users\ayush\AppData\Local\Programs\Opera GX\opera.exe";
+            if (File.Exists(operaPath))
+            {
+                System.Diagnostics.Process.Start(operaPath);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("Opera GX not found at specified path");
+            }
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error launching Opera GX: {ex}");
+        }
+    }
+
+    private void WhatsAppButton_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            System.Diagnostics.Process.Start("explorer.exe", "shell:AppsFolder\\5319275A.WhatsAppDesktop_cv1g1gvanyjgm!App");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error launching WhatsApp: {ex}");
+            // Fallback to web version if desktop app fails
+            try
+            {
+                System.Diagnostics.Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://web.whatsapp.com",
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception webEx)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error launching WhatsApp Web: {webEx}");
+            }
+        }
+    }
 }
+
