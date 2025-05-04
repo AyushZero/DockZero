@@ -1,0 +1,96 @@
+﻿<Window
+    x:Class="DockZero.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:DockZero"
+    Title="DockZero"
+    Width="900"
+    Height="15"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    Topmost="True"
+    ResizeMode="NoResize"
+    WindowStartupLocation="Manual"
+    MouseEnter="Window_MouseEnter"
+    MouseLeave="Window_MouseLeave"
+    Loaded="Window_Loaded">
+
+    <Window.Resources>
+        <local:WidthConverter x:Key="WidthConverter"/>
+        
+        <Storyboard x:Key="ExpandAnimation">
+            <DoubleAnimation 
+                Storyboard.TargetName="MainPanel"
+                Storyboard.TargetProperty="Height"
+                From="5" To="15" Duration="0:0:0.2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="MainPanel"
+                Storyboard.TargetProperty="Width"
+                From="100" To="900" Duration="0:0:0.2"/>
+        </Storyboard>
+        <Storyboard x:Key="CollapseAnimation">
+            <DoubleAnimation 
+                Storyboard.TargetName="MainPanel"
+                Storyboard.TargetProperty="Height"
+                From="15" To="5" Duration="0:0:0.2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="MainPanel"
+                Storyboard.TargetProperty="Width"
+                From="900" To="100" Duration="0:0:0.2"/>
+        </Storyboard>
+    </Window.Resources>
+
+    <Grid>
+        <Border x:Name="MainPanel"
+                Width="100"
+                Height="5"
+                CornerRadius="0,0,5,5"
+                VerticalAlignment="Top">
+            <Border.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                    <GradientStop Color="#D9000000" Offset="0"/>
+                    <GradientStop Color="#D9000000" Offset="1"/>
+                </LinearGradientBrush>
+            </Border.Background>
+            <Border.Effect>
+                <DropShadowEffect 
+                    BlurRadius="15" 
+                    Direction="270" 
+                    ShadowDepth="5" 
+                    Color="Black" 
+                    Opacity="0.3"/>
+            </Border.Effect>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <!-- Left Section -->
+                <StackPanel Grid.Column="0" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Left"
+                            Margin="10,0,0,0">
+                    <!-- Will add clock here -->
+                </StackPanel>
+
+                <!-- Center Section -->
+                <StackPanel Grid.Column="1" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Center">
+                    <!-- Will add timer controls here -->
+                </StackPanel>
+
+                <!-- Right Section -->
+                <StackPanel Grid.Column="2" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            Margin="0,0,10,0">
+                    <!-- Will add music controls here -->
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
