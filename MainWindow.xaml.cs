@@ -82,7 +82,7 @@ public partial class MainWindow : Window
         string suffix = GetDaySuffix(day);
         string month = date.ToString("MMMM");
         string year = date.ToString("''yy");
-        return $"{day}{suffix} {month} {year}";
+        return $"{day}{suffix} {month} '{year}";
     }
 
     private static string GetDaySuffix(int day)

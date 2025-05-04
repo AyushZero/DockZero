@@ -5,7 +5,7 @@
     xmlns:local="clr-namespace:DockZero"
     Title="DockZero"
     Width="900"
-    Height="15"
+    Height="18"
     WindowStyle="None"
     AllowsTransparency="True"
     Background="Transparent"
@@ -18,27 +18,48 @@
     KeyDown="Window_KeyDown">
 
     <Window.Resources>
-        <local:WidthConverter x:Key="WidthConverter"/>
+        <Style x:Key="TextStyle" TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Montserrat"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="LineHeight" Value="10"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
         
         <Storyboard x:Key="ExpandAnimation">
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
                 Storyboard.TargetProperty="Height"
-                From="5" To="15" Duration="0:0:0.2"/>
+                From="5" To="18" Duration="0:0:0.2"/>
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
                 Storyboard.TargetProperty="Width"
-                From="10" To="900" Duration="0:0:0.2"/>
+                From="100" To="900" Duration="0:0:0.2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="DateText"
+                Storyboard.TargetProperty="Opacity"
+                From="0" To="1" Duration="0:0:0.2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="TimeText"
+                Storyboard.TargetProperty="Opacity"
+                From="0" To="1" Duration="0:0:0.2"/>
         </Storyboard>
         <Storyboard x:Key="CollapseAnimation">
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
                 Storyboard.TargetProperty="Height"
-                From="15" To="5" Duration="0:0:0.2"/>
+                From="18" To="5" Duration="0:0:0.2"/>
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
                 Storyboard.TargetProperty="Width"
-                From="900" To="10" Duration="0:0:0.2"/>
+                From="900" To="100" Duration="0:0:0.2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="DateText"
+                Storyboard.TargetProperty="Opacity"
+                From="1" To="0" Duration="0:0:0.2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="TimeText"
+                Storyboard.TargetProperty="Opacity"
+                From="1" To="0" Duration="0:0:0.2"/>
         </Storyboard>
     </Window.Resources>
 
@@ -68,36 +89,24 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                
-                <!-- Left Section -->
-                <StackPanel Grid.Column="0" 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Left"
-                            Margin="10,0,0,0">
-                    <TextBlock x:Name="DateText" 
-                             Text="4th May '25" 
-                             FontFamily="Montserrat" 
-                             FontSize="12" 
-                             Foreground="#CCFFFFFF" 
-                             VerticalAlignment="Center"/>
-                </StackPanel>
 
                 <!-- Center Section -->
                 <StackPanel Grid.Column="1" Margin="0,0,0,0" MinWidth="10" HorizontalAlignment="Center">
-                    <TextBlock x:Name="TimeText"
-                             Text="00:00"
-                             FontFamily="Montserrat"
-                             FontSize="12"
-                             Foreground="White"
-                             HorizontalAlignment="Center"/>
-                </StackPanel>
-
-                <!-- Right Section -->
-                <StackPanel Grid.Column="2" 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Right"
-                            Margin="0,0,10,0">
-                    <!-- Will add music controls here -->
+                    <Border Background="#0DFFFFFF" CornerRadius="4" Padding="8,2" Height="15">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock x:Name="TimeText"
+                                     Text="00:00"
+                                     Style="{StaticResource TextStyle}"
+                                     Foreground="White"
+                                     HorizontalAlignment="Center"
+                                     Margin="0,0,8,0"/>
+                            <TextBlock x:Name="DateText" 
+                                     Text="4th May '25" 
+                                     Style="{StaticResource TextStyle}"
+                                     Foreground="#CCFFFFFF" 
+                                     HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
                 </StackPanel>
             </Grid>
         </Border>
