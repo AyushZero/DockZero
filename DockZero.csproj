@@ -15,4 +15,8 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="svg music\*.svg" />
+  </ItemGroup>
+
 </Project>

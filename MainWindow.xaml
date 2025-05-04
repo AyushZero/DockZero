@@ -25,6 +25,27 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
         
+        <Style x:Key="MediaButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="4,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <ContentPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
+        <Style x:Key="MediaIconStyle" TargetType="Path">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="12"/>
+            <Setter Property="Fill" Value="White"/>
+            <Setter Property="Stretch" Value="Uniform"/>
+            <Setter Property="Margin" Value="4,0"/>
+        </Style>
+        
         <Storyboard x:Key="ExpandAnimation">
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
@@ -67,7 +88,7 @@
         <Border x:Name="MainPanel"
                 Width="100"
                 Height="5"
-                CornerRadius="0,0,5,5"
+                CornerRadius="0,0,15,15"
                 VerticalAlignment="Top">
             <Border.Background>
                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
@@ -106,6 +127,54 @@
                                      Foreground="#CCFFFFFF" 
                                      HorizontalAlignment="Center"/>
                         </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Right Section - Media Controls -->
+                <StackPanel Grid.Column="2" 
+                            Orientation="Horizontal" 
+                            HorizontalAlignment="Right"
+                            Margin="0,0,10,0"
+                            VerticalAlignment="Center">
+                    <!-- Media Controls -->
+                    <Border Background="#0DFFFFFF" 
+                            CornerRadius="4" 
+                            Padding="8,2" 
+                            Height="15"
+                            Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal" 
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center">
+                            <Button x:Name="PreviousButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="PreviousButton_Click">
+                                <Path Data="M6 6h2v12H6zm3.5 6l8.5 6V6z" 
+                                      Style="{StaticResource MediaIconStyle}"/>
+                            </Button>
+                            <Button x:Name="PlayPauseButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="PlayPauseButton_Click">
+                                <Path Data="M8 5v14l11-7z" 
+                                      Style="{StaticResource MediaIconStyle}"/>
+                            </Button>
+                            <Button x:Name="NextButton"
+                                    Style="{StaticResource MediaButtonStyle}"
+                                    Click="NextButton_Click">
+                                <Path Data="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z" 
+                                      Style="{StaticResource MediaIconStyle}"/>
+                            </Button>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Media Info -->
+                    <Border Background="#0DFFFFFF" 
+                            CornerRadius="4" 
+                            Padding="8,2" 
+                            Height="15">
+                        <TextBlock x:Name="MediaInfoText"
+                                 Text="No media playing"
+                                 Style="{StaticResource TextStyle}"
+                                 Foreground="#CCFFFFFF"/>
                     </Border>
                 </StackPanel>
             </Grid>

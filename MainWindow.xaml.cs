@@ -128,4 +128,19 @@ public partial class MainWindow : Window
             Application.Current.Shutdown();
         }
     }
+
+    private void PreviousButton_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement previous track functionality
+    }
+
+    private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement play/pause functionality
+    }
+
+    private void NextButton_Click(object sender, RoutedEventArgs e)
+    {
+        // TODO: Implement next track functionality
+    }
 }
