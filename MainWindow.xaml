@@ -14,7 +14,8 @@
     WindowStartupLocation="Manual"
     MouseEnter="Window_MouseEnter"
     MouseLeave="Window_MouseLeave"
-    Loaded="Window_Loaded">
+    Loaded="Window_Loaded"
+    KeyDown="Window_KeyDown">
 
     <Window.Resources>
         <local:WidthConverter x:Key="WidthConverter"/>
@@ -27,7 +28,7 @@
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
                 Storyboard.TargetProperty="Width"
-                From="100" To="900" Duration="0:0:0.2"/>
+                From="10" To="900" Duration="0:0:0.2"/>
         </Storyboard>
         <Storyboard x:Key="CollapseAnimation">
             <DoubleAnimation 
@@ -37,7 +38,7 @@
             <DoubleAnimation 
                 Storyboard.TargetName="MainPanel"
                 Storyboard.TargetProperty="Width"
-                From="900" To="100" Duration="0:0:0.2"/>
+                From="900" To="10" Duration="0:0:0.2"/>
         </Storyboard>
     </Window.Resources>
 
@@ -73,14 +74,22 @@
                             Orientation="Horizontal" 
                             HorizontalAlignment="Left"
                             Margin="10,0,0,0">
-                    <!-- Will add clock here -->
+                    <TextBlock x:Name="DateText" 
+                             Text="4th May '25" 
+                             FontFamily="Montserrat" 
+                             FontSize="12" 
+                             Foreground="#CCFFFFFF" 
+                             VerticalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Center Section -->
-                <StackPanel Grid.Column="1" 
-                            Orientation="Horizontal" 
-                            HorizontalAlignment="Center">
-                    <!-- Will add timer controls here -->
+                <StackPanel Grid.Column="1" Margin="0,0,0,0" MinWidth="10" HorizontalAlignment="Center">
+                    <TextBlock x:Name="TimeText"
+                             Text="00:00"
+                             FontFamily="Montserrat"
+                             FontSize="12"
+                             Foreground="White"
+                             HorizontalAlignment="Center"/>
                 </StackPanel>
 
                 <!-- Right Section -->
