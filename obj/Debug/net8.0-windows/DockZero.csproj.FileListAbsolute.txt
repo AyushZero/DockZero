@@ -19,3 +19,5 @@ Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.genruntimeconfig.c
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\ref\DockZero.dll
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero_MarkupCompile.lref
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\icons\icon32.ico
+Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.sourcelink.json
