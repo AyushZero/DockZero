@@ -17,7 +17,15 @@ Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\refint\DockZero.dll
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.pdb
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.genruntimeconfig.cache
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\ref\DockZero.dll
-Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\GeneratedInternalTypeHelper.g.cs
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero_MarkupCompile.lref
 Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\icons\icon32.ico
 Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.sourcelink.json
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.dll
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.Asio.dll
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.Core.dll
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.Midi.dll
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.Wasapi.dll
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.WinForms.dll
+Z:\Development\WPF\DockZero\bin\Debug\net8.0-windows\NAudio.WinMM.dll
+Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.csproj.AssemblyReference.cache
+Z:\Development\WPF\DockZero\obj\Debug\net8.0-windows\DockZero.csproj.Up2Date

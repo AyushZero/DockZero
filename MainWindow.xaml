@@ -140,8 +140,7 @@
                     <Border Background="#0DFFFFFF" 
                             CornerRadius="4" 
                             Padding="8,2" 
-                            Height="15"
-                            Margin="0,0,8,0">
+                            Height="15">
                         <StackPanel Orientation="Horizontal" 
                                   HorizontalAlignment="Center" 
                                   VerticalAlignment="Center">
@@ -164,17 +163,6 @@
                                       Style="{StaticResource MediaIconStyle}"/>
                             </Button>
                         </StackPanel>
-                    </Border>
-
-                    <!-- Media Info -->
-                    <Border Background="#0DFFFFFF" 
-                            CornerRadius="4" 
-                            Padding="8,2" 
-                            Height="15">
-                        <TextBlock x:Name="MediaInfoText"
-                                 Text="No media playing"
-                                 Style="{StaticResource TextStyle}"
-                                 Foreground="#CCFFFFFF"/>
                     </Border>
                 </StackPanel>
             </Grid>
