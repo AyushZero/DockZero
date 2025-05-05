@@ -216,12 +216,14 @@
                                      Style="{StaticResource TextStyle}"
                                      Foreground="White"
                                      HorizontalAlignment="Center"
-                                     Margin="0,0,8,0"/>
+                                     Margin="0,0,8,0"
+                                     Opacity="0"/>
                             <TextBlock x:Name="DateText" 
                                      Text="4th May '25" 
                                      Style="{StaticResource TextStyle}"
                                      Foreground="#CCFFFFFF" 
-                                     HorizontalAlignment="Center"/>
+                                     HorizontalAlignment="Center"
+                                     Opacity="0"/>
                         </StackPanel>
                     </Border>
                 </StackPanel>
