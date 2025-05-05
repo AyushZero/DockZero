@@ -13,6 +13,8 @@ using System.Drawing;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Interop;
+using System.ComponentModel;
 
 namespace DockZero;
 
@@ -34,6 +36,16 @@ public partial class MainWindow : Window
     private bool isMinimizedToTray = false;
     private List<string> notes = new List<string>();
     private const string NOTES_FILE = "notes.txt";
+
+    // Win32 API imports for window styles
+    private const int GWL_EXSTYLE = -20;
+    private const int WS_EX_TOOLWINDOW = 0x00000080;
+
+    [DllImport("user32.dll")]
+    private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
+    [DllImport("user32.dll")]
+    private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
     [DllImport("user32.dll")]
     private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
@@ -136,6 +148,14 @@ public partial class MainWindow : Window
 
         // Load saved notes
         LoadNotes();
+
+        Loaded += (s, e) =>
+        {
+            // Set WS_EX_TOOLWINDOW extended window style
+            var helper = new WindowInteropHelper(this);
+            var exStyle = GetWindowLong(helper.Handle, GWL_EXSTYLE);
+            SetWindowLong(helper.Handle, GWL_EXSTYLE, exStyle | WS_EX_TOOLWINDOW);
+        };
     }
 
     private void InitializeTrayIcon()
@@ -174,17 +194,16 @@ public partial class MainWindow : Window
         System.Windows.Application.Current.Shutdown();
     }
 
-    protected override void OnStateChanged(EventArgs e)
+    private void Window_StateChanged(object sender, EventArgs e)
     {
         if (WindowState == WindowState.Minimized)
         {
             Hide();
             isMinimizedToTray = true;
         }
-        base.OnStateChanged(e);
     }
 
-    protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+    private void Window_Closing(object sender, CancelEventArgs e)
     {
         if (!isMinimizedToTray)
         {
@@ -196,7 +215,6 @@ public partial class MainWindow : Window
         {
             trayIcon?.Dispose();
         }
-        base.OnClosing(e);
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -725,6 +743,11 @@ public partial class MainWindow : Window
                 System.Diagnostics.Debug.WriteLine($"Error launching WhatsApp Web: {webEx}");
             }
         }
+    }
+
+    private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    {
+        DragMove();
     }
 }
 

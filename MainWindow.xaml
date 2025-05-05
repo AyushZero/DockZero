@@ -7,16 +7,18 @@
     Width="900"
     Height="18"
     WindowStyle="None"
-    AllowsTransparency="True"
-    Background="Transparent"
+    ResizeMode="NoResize"
     Topmost="True"
     ShowInTaskbar="False"
-    ResizeMode="NoResize"
-    WindowStartupLocation="Manual"
+    AllowsTransparency="True"
+    Background="Transparent"
+    MouseLeftButtonDown="Window_MouseLeftButtonDown"
     MouseEnter="Window_MouseEnter"
     MouseLeave="Window_MouseLeave"
+    KeyDown="Window_KeyDown"
     Loaded="Window_Loaded"
-    KeyDown="Window_KeyDown">
+    StateChanged="Window_StateChanged"
+    Closing="Window_Closing">
 
     <Window.Resources>
         <Style x:Key="TextStyle" TargetType="TextBlock">
