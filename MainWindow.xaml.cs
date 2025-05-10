@@ -25,6 +25,7 @@ public partial class MainWindow : Window
 {
     private Storyboard expandAnimation;
     private Storyboard collapseAnimation;
+    private DispatcherTimer collapseDelayTimer;
     public required DispatcherTimer timer;
     private bool isPlaying = false;
     private System.Windows.Shapes.Path? playPauseIcon;
@@ -131,6 +132,22 @@ public partial class MainWindow : Window
         InitializeComponent();
         expandAnimation = (Storyboard)FindResource("ExpandAnimation");
         collapseAnimation = (Storyboard)FindResource("CollapseAnimation");
+        
+        // Initialize collapse delay timer
+        collapseDelayTimer = new DispatcherTimer();
+        collapseDelayTimer.Interval = TimeSpan.FromSeconds(1);
+        collapseDelayTimer.Tick += (s, e) =>
+        {
+            collapseDelayTimer.Stop();
+            try
+            {
+                collapseAnimation.Begin();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error during collapse animation: {ex}");
+            }
+        };
         
         // Get reference to the play/pause icon
         if (PlayPauseButton.Content is System.Windows.Shapes.Path icon)
@@ -295,6 +312,7 @@ public partial class MainWindow : Window
 
     private void Window_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
     {
+        collapseDelayTimer.Stop();
         try
         {
             expandAnimation.Begin();
@@ -307,14 +325,7 @@ public partial class MainWindow : Window
 
     private void Window_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
     {
-        try
-        {
-            collapseAnimation.Begin();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error during collapse animation: {ex}");
-        }
+        collapseDelayTimer.Start();
     }
 
     private void Window_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
